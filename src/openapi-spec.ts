@@ -1,5 +1,5 @@
-import {ApplicationConfig} from '@loopback/core';
-import {ExpenseTrackerServerApplication} from './application';
+import { ApplicationConfig } from '@loopback/core';
+import { ExpenseTrackerServerApplication } from './application';
 
 /**
  * Export the OpenAPI spec from the application
@@ -7,7 +7,7 @@ import {ExpenseTrackerServerApplication} from './application';
 async function exportOpenApiSpec(): Promise<void> {
   const config: ApplicationConfig = {
     rest: {
-      port: +(process.env.PORT ?? 3000),
+      port: +(process.env.PORT ?? 8000),
       host: process.env.HOST ?? 'localhost',
     },
   };

@@ -28,5 +28,9 @@
   "eslint.validate": [
     "javascript",
     "typescript"
+  ],
+  "cSpell.words": [
+    "datasource",
+    "datasources"
   ]
 }
