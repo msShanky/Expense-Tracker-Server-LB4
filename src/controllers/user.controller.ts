@@ -21,6 +21,9 @@ import {
   WhoAmIResponse,
 } from '../specs/user.specs';
 
+// TODO: Add the refresh and access token for the application
+// TODO: The application should have /refreshToken example https://loopback.io/doc/en/lb4/JWT-authentication-extension.html
+
 export class UserController {
   constructor(
     @repository(UserRepository) protected userRepo: UserRepository,
