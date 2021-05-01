@@ -1,6 +1,15 @@
-import { User } from '@loopback/authentication-jwt';
+import { model, property } from '@loopback/repository';
 import { getModelSchemaRef, RequestBodyObject, ResponseObject, ResponsesObject, SchemaObject } from '@loopback/rest';
-import { NewUser } from '../models';
+import { UserAccount } from '../models';
+
+@model()
+export class NewUserRequest extends UserAccount {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+}
 
 export const LoginSchema: SchemaObject = {
   type: 'object',
@@ -53,7 +62,10 @@ export const RegisterRequestBody: RequestBodyObject = {
   required: true,
   content: {
     'application/json': {
-      schema: getModelSchemaRef(NewUser),
+      schema: getModelSchemaRef(NewUserRequest, {
+        includeRelations: false,
+        exclude: ['userId', 'emailVerified', 'lastLogin', 'createdAt', 'updatedAt', 'userCredentials'],
+      }),
     },
   },
 };
@@ -63,7 +75,7 @@ export const RegisterSuccessResponse: ResponseObject = {
   content: {
     'application/json': {
       schema: {
-        'x-ts-type': User,
+        'x-ts-type': UserAccount,
       },
     },
   },

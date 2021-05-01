@@ -1,21 +1,18 @@
 import { authenticate, TokenService } from '@loopback/authentication';
-import {
-  Credentials,
-  MyUserService,
-  TokenServiceBindings,
-  User,
-  UserRepository,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
+import { Credentials, TokenServiceBindings } from '@loopback/authentication-jwt';
 import { inject } from '@loopback/context';
+import { service } from '@loopback/core';
 import { repository } from '@loopback/repository';
 import { get, post, requestBody } from '@loopback/rest';
 import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
 import { genSalt, hash } from 'bcryptjs';
-import { NewUser } from '../models';
+import { UserAccount } from '../models';
+import { UserAccountRepository, UserCredentialsRepository } from '../repositories';
+import { CustomUserService } from '../services';
 import {
   LoginRequestBody,
   LoginResponse,
+  NewUserRequest,
   RegisterRequestBody,
   RegisterResponse,
   WhoAmIResponse,
@@ -23,8 +20,9 @@ import {
 
 export class UserController {
   constructor(
-    @repository(UserRepository) protected userRepo: UserRepository,
-    @inject(UserServiceBindings.USER_SERVICE) public userService: MyUserService,
+    @repository(UserAccountRepository) protected userRepo: UserAccountRepository,
+    @repository(UserCredentialsRepository) protected userCredentialsRepo: UserCredentialsRepository,
+    @service(CustomUserService) public userService: CustomUserService,
     @inject(TokenServiceBindings.TOKEN_SERVICE) public jwtService: TokenService,
     @inject(SecurityBindings.USER, { optional: true }) public user: UserProfile,
   ) {}
@@ -45,14 +43,16 @@ export class UserController {
   }
 
   @post('/register', { responses: RegisterResponse })
-  async register(@requestBody(RegisterRequestBody) newUserRequest: NewUser): Promise<User> {
+  async register(@requestBody(RegisterRequestBody) newUserRequest: NewUserRequest): Promise<UserAccount> {
     console.log('Request body for the new user registration', newUserRequest);
     const { password, ...otherParams } = newUserRequest;
     const salt = await genSalt();
     const hashedPassword = await hash(password, salt);
     console.log('The hashed password is', hashedPassword);
     const savedUser = await this.userRepo.create(otherParams);
-    await this.userRepo.userCredentials(savedUser.id).create({ password: hashedPassword });
+    console.log('SAVED USER ID', savedUser);
+    // await this.userRepo.userCredentials(savedUser.userId).create({ userPassword: hashedPassword });
+    await this.userCredentialsRepo.create({ userPassword: hashedPassword, userId: savedUser.userId });
     return savedUser;
   }
 }
