@@ -1,5 +1,6 @@
-import { Entity, hasOne, model, property } from '@loopback/repository';
+import { Entity, hasMany, hasOne, model, property } from '@loopback/repository';
 import { UserCredentials } from './user-credentials.model';
+import { Wallet } from './wallet.model';
 
 @model({
   settings: {
@@ -9,15 +10,22 @@ import { UserCredentials } from './user-credentials.model';
 })
 export class UserAccount extends Entity {
   @property({
-    type: 'number',
-    required: false,
-    generated: true,
+    type: 'string',
+    required: true,
     precision: 10,
     scale: 0,
-    id: 1,
-    mysql: { columnName: 'user_id', dataType: 'int', dataLength: null, dataPrecision: 10, dataScale: 0, nullable: 'N' },
+    defaultFn: 'uuidv4',
+    id: true,
+    mysql: {
+      columnName: 'user_id',
+      dataType: 'varchar',
+      dataLength: 30,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'N',
+    },
   })
-  userId: number;
+  id: string;
 
   @property({
     type: 'string',
@@ -49,19 +57,19 @@ export class UserAccount extends Entity {
   email: string;
 
   @property({
-    type: 'number',
-    precision: 3,
+    type: 'boolean',
+    precision: 1,
     scale: 0,
     mysql: {
       columnName: 'email_verified',
       dataType: 'tinyint',
       dataLength: null,
-      dataPrecision: 3,
+      dataPrecision: 1,
       dataScale: 0,
       nullable: 'Y',
     },
   })
-  emailVerified?: number;
+  emailVerified?: boolean;
 
   @property({
     type: 'string',
@@ -133,6 +141,9 @@ export class UserAccount extends Entity {
 
   @hasOne(() => UserCredentials, { keyTo: 'userId' })
   userCredentials: UserCredentials;
+
+  @hasMany(() => Wallet, { keyTo: 'userId' })
+  wallets: Wallet[];
   // Define well-known properties here
 
   // Indexer property to allow additional data

@@ -19,7 +19,7 @@ export class UserAccountUserCredentialsController {
     },
   })
   async get(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<UserCredentials>,
   ): Promise<UserCredentials> {
     return this.userAccountRepository.userCredentials(id).get(filter);
@@ -34,7 +34,7 @@ export class UserAccountUserCredentialsController {
     },
   })
   async create(
-    @param.path.number('id') id: typeof UserAccount.prototype.userId,
+    @param.path.string('id') id: typeof UserAccount.prototype.id,
     @requestBody({
       content: {
         'application/json': {
@@ -60,7 +60,7 @@ export class UserAccountUserCredentialsController {
     },
   })
   async patch(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -83,7 +83,7 @@ export class UserAccountUserCredentialsController {
     },
   })
   async delete(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(UserCredentials)) where?: Where<UserCredentials>,
   ): Promise<Count> {
     return this.userAccountRepository.userCredentials(id).delete(where);

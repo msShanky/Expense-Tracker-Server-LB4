@@ -64,7 +64,7 @@ export const RegisterRequestBody: RequestBodyObject = {
     'application/json': {
       schema: getModelSchemaRef(NewUserRequest, {
         includeRelations: false,
-        exclude: ['userId', 'emailVerified', 'lastLogin', 'createdAt', 'updatedAt', 'userCredentials'],
+        exclude: ['id', 'emailVerified', 'lastLogin', 'createdAt', 'updatedAt', 'userCredentials'],
       }),
     },
   },

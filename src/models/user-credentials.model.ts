@@ -8,22 +8,37 @@ import { Entity, model, property } from '@loopback/repository';
 })
 export class UserCredentials extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     required: false,
-    generated: true,
-    precision: 10,
-    scale: 0,
-    id: 1,
+    generated: false,
+    length: 255,
+    id: true,
+    defaultFn: 'uuidv4',
     mysql: {
       columnName: 'user_credentials_id',
-      dataType: 'int',
-      dataLength: null,
-      dataPrecision: 10,
-      dataScale: 0,
+      dataType: 'varchar',
+      dataLength: 255,
+      dataPrecision: null,
+      dataScale: null,
       nullable: 'N',
     },
   })
-  userCredentialsId: number;
+  id: string;
+
+  @property({
+    type: 'string',
+    required: true,
+    length: 255,
+    mysql: {
+      columnName: 'user_id',
+      dataType: 'varchar',
+      dataLength: 255,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'N',
+    },
+  })
+  userId: string;
 
   @property({
     type: 'string',
@@ -38,16 +53,7 @@ export class UserCredentials extends Entity {
       nullable: 'N',
     },
   })
-  userPassword: string;
-
-  @property({
-    type: 'number',
-    required: true,
-    precision: 10,
-    scale: 0,
-    mysql: { columnName: 'user_id', dataType: 'int', dataLength: null, dataPrecision: 10, dataScale: 0, nullable: 'N' },
-  })
-  userId: number;
+  password: string;
 
   @property({
     type: 'date',

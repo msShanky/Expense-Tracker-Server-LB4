@@ -35,7 +35,9 @@
     "start": "node -r source-map-support/register .",
     "start:watch": "tsc-watch --target es2017 --outDir ./dist --onSuccess \"node --inspect .\"",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "npm run clean && npm run build",
+    "database:discover": "lb4 discover --schema expense_tracker_db",
+    "database:debug" : "SET DEBUG=loopback:connector:mysql && npm run start:watch"
   },
   "repository": {
     "type": "git",
@@ -59,6 +61,7 @@
     "@loopback/rest-explorer": "^3.2.0",
     "@loopback/service-proxy": "^3.1.0",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^9.0.2",
     "loopback-connector-mysql": "^5.4.4",
     "tslib": "^2.0.0"
   },

@@ -1,9 +1,9 @@
 import { inject } from '@loopback/core';
-import { DefaultCrudRepository } from '@loopback/repository';
+import { DefaultTransactionalRepository } from '@loopback/repository';
 import { MysqldbDataSource } from '../datasources';
 import { UserCredentials, UserCredentialsRelations } from '../models';
 
-export class UserCredentialsRepository extends DefaultCrudRepository<
+export class UserCredentialsRepository extends DefaultTransactionalRepository<
   UserCredentials,
   typeof UserCredentials.prototype.userCredentialsId,
   UserCredentialsRelations
