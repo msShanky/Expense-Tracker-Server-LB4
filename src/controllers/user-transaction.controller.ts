@@ -1,112 +1,84 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
-} from '@loopback/rest';
-import {UserTransaction} from '../models';
-import {UserTransactionRepository} from '../repositories';
-
+import { authenticate } from '@loopback/authentication';
+import { inject } from '@loopback/core';
+import { Count, CountSchema, FilterExcludingWhere, repository } from '@loopback/repository';
+import { del, get, getModelSchemaRef, param, patch, post, put, requestBody, response } from '@loopback/rest';
+import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
+import { UserTransaction } from '../models';
+import { UserTransactionRepository } from '../repositories';
+import { UserTransactionGetResponse, UserTransactionPostRequest } from '../specs/user.transaction.specs';
+@authenticate('jwt')
 export class UserTransactionController {
   constructor(
     @repository(UserTransactionRepository)
-    public userTransactionRepository : UserTransactionRepository,
+    public userTransactionRepository: UserTransactionRepository,
+    @inject(SecurityBindings.USER) public currentUser: UserProfile,
   ) {}
 
   @post('/user-transactions')
   @response(200, {
     description: 'UserTransaction model instance',
-    content: {'application/json': {schema: getModelSchemaRef(UserTransaction)}},
+    content: { 'application/json': { schema: getModelSchemaRef(UserTransaction) } },
   })
   async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(UserTransaction, {
-            title: 'NewUserTransaction',
-            exclude: ['transactionId'],
-          }),
-        },
-      },
-    })
-    userTransaction: Omit<UserTransaction, 'transactionId'>,
+    @requestBody(UserTransactionPostRequest)
+    userTransaction: Omit<UserTransaction, 'transactionId' | 'userId'>,
   ): Promise<UserTransaction> {
-    return this.userTransactionRepository.create(userTransaction);
+    console.log('THE BODY RECEIVED FOR THE CREATION IS', userTransaction);
+    const userId = this.currentUser[securityId];
+    return this.userTransactionRepository.create({ ...userTransaction, userId });
   }
 
   @get('/user-transactions/count')
   @response(200, {
     description: 'UserTransaction model count',
-    content: {'application/json': {schema: CountSchema}},
+    content: { 'application/json': { schema: CountSchema } },
   })
-  async count(
-    @param.where(UserTransaction) where?: Where<UserTransaction>,
-  ): Promise<Count> {
-    return this.userTransactionRepository.count(where);
+  async count(): Promise<Count> {
+    const userId = this.currentUser[securityId];
+    return this.userTransactionRepository.count({ userId });
   }
 
   @get('/user-transactions')
-  @response(200, {
-    description: 'Array of UserTransaction model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(UserTransaction, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(UserTransaction) filter?: Filter<UserTransaction>,
-  ): Promise<UserTransaction[]> {
-    return this.userTransactionRepository.find(filter);
+  @response(200, UserTransactionGetResponse)
+  async find(): Promise<UserTransaction[]> {
+    const userId = this.currentUser[securityId];
+    return this.userTransactionRepository.find({
+      where: { userId },
+      include: ['creditedToWallet', 'debitedFromWallet', 'transactionType'],
+    });
   }
 
-  @patch('/user-transactions')
-  @response(200, {
-    description: 'UserTransaction PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(UserTransaction, {partial: true}),
-        },
-      },
-    })
-    userTransaction: UserTransaction,
-    @param.where(UserTransaction) where?: Where<UserTransaction>,
-  ): Promise<Count> {
-    return this.userTransactionRepository.updateAll(userTransaction, where);
-  }
+  // @patch('/user-transactions')
+  // @response(200, {
+  //   description: 'UserTransaction PATCH success count',
+  //   content: { 'application/json': { schema: CountSchema } },
+  // })
+  // async updateAll(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(UserTransaction, { partial: true }),
+  //       },
+  //     },
+  //   })
+  //   userTransaction: UserTransaction,
+  //   @param.where(UserTransaction) where?: Where<UserTransaction>,
+  // ): Promise<Count> {
+  //   return this.userTransactionRepository.updateAll(userTransaction, where);
+  // }
 
   @get('/user-transactions/{id}')
   @response(200, {
     description: 'UserTransaction model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(UserTransaction, {includeRelations: true}),
+        schema: getModelSchemaRef(UserTransaction, { includeRelations: true }),
       },
     },
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(UserTransaction, {exclude: 'where'}) filter?: FilterExcludingWhere<UserTransaction>
+    @param.filter(UserTransaction, { exclude: 'where' }) filter?: FilterExcludingWhere<UserTransaction>,
   ): Promise<UserTransaction> {
     return this.userTransactionRepository.findById(id, filter);
   }
@@ -120,7 +92,7 @@ export class UserTransactionController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(UserTransaction, {partial: true}),
+          schema: getModelSchemaRef(UserTransaction, { partial: true }),
         },
       },
     })

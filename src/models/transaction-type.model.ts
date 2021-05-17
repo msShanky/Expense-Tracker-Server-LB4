@@ -11,7 +11,7 @@ export class TransactionType extends Entity {
     type: 'string',
     length: 150,
     mysql: {
-      columnName: 'transaction_name',
+      columnName: 'transaction_type_name',
       dataType: 'varchar',
       dataLength: 150,
       dataPrecision: null,
@@ -19,7 +19,7 @@ export class TransactionType extends Entity {
       nullable: 'Y',
     },
   })
-  transactionName?: string;
+  transactionTypeName?: string;
 
   @property({
     type: 'number',

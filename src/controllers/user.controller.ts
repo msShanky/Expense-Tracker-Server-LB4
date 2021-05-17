@@ -35,7 +35,7 @@ export class UserController {
     const user = await this.userService.verifyCredentials(credentials);
     const userProfile = this.userService.convertToUserProfile(user);
     const token = await this.jwtService.generateToken(userProfile);
-    await this.userRepo.updateById(user.id, { lastLogin: new Date().toLocaleString() });
+    await this.userRepo.updateById(user.id, { lastLogin: new Date().toUTCString() });
     this.response.cookie('token', token);
     return { ...userProfile, token };
   }

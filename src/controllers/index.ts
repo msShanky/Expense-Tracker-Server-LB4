@@ -6,3 +6,5 @@ export * from './user-account-user-credentials.controller';
 export * from './user-account-wallet.controller';
 export * from './wallet.controller';
 export * from './user-transaction.controller';
+export * from './user-transaction-wallet.controller';
+export * from './user-transaction-transaction-type.controller';
