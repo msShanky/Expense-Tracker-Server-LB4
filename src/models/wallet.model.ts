@@ -53,6 +53,32 @@ export class Wallet extends Entity {
   })
   userId: string;
 
+  @property({
+    type: 'date',
+    mysql: {
+      columnName: 'created_at',
+      dataType: 'datetime',
+      dataLength: null,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'Y',
+    },
+  })
+  createdAt?: string;
+
+  @property({
+    type: 'date',
+    mysql: {
+      columnName: 'updated_at',
+      dataType: 'datetime',
+      dataLength: null,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'Y',
+    },
+  })
+  updatedAt?: string;
+
   // Define well-known properties here
 
   // Indexer property to allow additional data

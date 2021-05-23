@@ -1,4 +1,5 @@
 import { belongsTo, Entity, model, property } from '@loopback/repository';
+import { PaymentInformation } from './payment-information.model';
 import { TransactionType } from './transaction-type.model';
 import { Wallet } from './wallet.model';
 
@@ -87,14 +88,17 @@ export class UserTransaction extends Entity {
   })
   userId: string;
 
-  @belongsTo(() => Wallet, { name: 'creditedToWallet' }, { name: 'credited_to' })
-  creditedTo: number;
+  @belongsTo(() => Wallet, { name: 'creditedToWallet' }, { name: 'credited_wallet_id' })
+  creditedWalletId: number;
 
-  @belongsTo(() => Wallet, { name: 'debitedFromWallet' }, { name: 'debited_from' })
-  debitedFrom: number;
+  @belongsTo(() => Wallet, { name: 'debitedFromWallet' }, { name: 'debited_wallet_id' })
+  debitedWalletId: number;
 
   @belongsTo(() => TransactionType, { name: 'transactionType' }, { name: 'transaction_type_id' })
   transactionTypeId: number;
+
+  @belongsTo(() => PaymentInformation)
+  paymentInformationId: number;
   // Define well-known properties here
 
   // Indexer property to allow additional data

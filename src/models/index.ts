@@ -4,3 +4,4 @@ export * from './wallet.model';
 export * from './transaction-type.model';
 export * from './user-category.model';
 export * from './user-transaction.model';
+export * from './payment-information.model';
