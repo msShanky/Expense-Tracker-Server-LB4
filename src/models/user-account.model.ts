@@ -1,5 +1,6 @@
 import { Entity, hasMany, hasOne, model, property } from '@loopback/repository';
 import { UserCredentials } from './user-credentials.model';
+import { UserWalletAccess } from './user-wallet-access.model';
 import { Wallet } from './wallet.model';
 
 @model({
@@ -74,6 +75,36 @@ export class UserAccount extends Entity {
   @property({
     type: 'string',
     required: true,
+    length: 60,
+    mysql: {
+      columnName: 'phone_number',
+      dataType: 'varchar',
+      dataLength: 255,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'N',
+    },
+  })
+  phoneNumber: string;
+
+  @property({
+    type: 'boolean',
+    precision: 1,
+    scale: 0,
+    mysql: {
+      columnName: 'phone_number_verified',
+      dataType: 'tinyint',
+      dataLength: null,
+      dataPrecision: 1,
+      dataScale: 0,
+      nullable: 'Y',
+    },
+  })
+  phoneNumberVerified?: boolean;
+
+  @property({
+    type: 'string',
+    required: true,
     length: 100,
     mysql: {
       columnName: 'first_name',
@@ -142,7 +173,7 @@ export class UserAccount extends Entity {
   @hasOne(() => UserCredentials, { keyTo: 'userId' })
   userCredentials: UserCredentials;
 
-  @hasMany(() => Wallet, { keyTo: 'userId' })
+  @hasMany(() => Wallet, { through: { model: () => UserWalletAccess, keyFrom: 'userId' } })
   wallets: Wallet[];
   // Define well-known properties here
 

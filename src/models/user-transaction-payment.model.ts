@@ -1,20 +1,20 @@
-import { Entity, model, property, hasMany} from '@loopback/repository';
-import {UserAccount} from './user-account.model';
-import {UserWalletAccess} from './user-wallet-access.model';
+import { Entity, model, property } from '@loopback/repository';
 
 @model({
-  settings: { idInjection: false, mysql: { schema: 'expense_tracker_db', table: 'wallet' } },
+  settings: {
+    idInjection: false,
+    mysql: { schema: 'expense_tracker_db', table: 'user_transaction_payment' },
+  },
 })
-export class Wallet extends Entity {
+export class UserTransactionPayment extends Entity {
   @property({
     type: 'number',
-    required: false,
-    generated: true,
+    required: true,
     precision: 10,
     scale: 0,
     id: 1,
     mysql: {
-      columnName: 'wallet_id',
+      columnName: 'user_transaction_payment_id',
       dataType: 'int',
       dataLength: null,
       dataPrecision: 10,
@@ -22,54 +22,41 @@ export class Wallet extends Entity {
       nullable: 'N',
     },
   })
-  walletId?: number;
+  userTransactionPaymentId: number;
 
   @property({
-    type: 'string',
-    required: true,
-    length: 200,
-    mysql: {
-      columnName: 'wallet_name',
-      dataType: 'varchar',
-      dataLength: 200,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'N',
-    },
-  })
-  walletName: string;
-
-  @property({
-    type: 'string',
+    type: 'number',
     required: true,
     precision: 10,
     scale: 0,
+    id: 2,
     mysql: {
-      columnName: 'created_by',
-      dataType: 'varchar',
-      dataLength: 255,
+      columnName: 'transaction_id',
+      dataType: 'int',
+      dataLength: null,
       dataPrecision: 10,
       dataScale: 0,
       nullable: 'N',
     },
   })
-  createdBy: string;
+  transactionId: number;
 
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
     precision: 10,
     scale: 0,
+    id: 3,
     mysql: {
-      columnName: 'updated_by',
-      dataType: 'varchar',
-      dataLength: 255,
+      columnName: 'payment_information_id',
+      dataType: 'int',
+      dataLength: null,
       dataPrecision: 10,
       dataScale: 0,
       nullable: 'N',
     },
   })
-  updatedBy: string;
+  paymentInformationId: number;
 
   @property({
     type: 'date',
@@ -97,21 +84,19 @@ export class Wallet extends Entity {
   })
   updatedAt?: string;
 
-  @hasMany(() => UserAccount, {through: {model: () => UserWalletAccess, keyTo: 'userId'}})
-  userAccounts: UserAccount[];
   // Define well-known properties here
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
 
-  constructor(data?: Partial<Wallet>) {
+  constructor(data?: Partial<UserTransactionPayment>) {
     super(data);
   }
 }
 
-export interface WalletRelations {
+export interface UserTransactionPaymentRelations {
   // describe navigational properties here
 }
 
-export type WalletWithRelations = Wallet & WalletRelations;
+export type UserTransactionPaymentWithRelations = UserTransactionPayment & UserTransactionPaymentRelations;

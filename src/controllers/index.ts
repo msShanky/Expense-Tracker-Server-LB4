@@ -7,3 +7,6 @@ export * from './user-transaction-wallet.controller';
 export * from './user-transaction.controller';
 export * from './user.controller';
 export * from './wallet.controller';
+export * from './wallet-user-account.controller';
+export * from './user-transaction-user-category.controller';
+export * from './payment-information-user-transaction.controller';

@@ -59,7 +59,6 @@ export class UserController {
     const { password, ...otherParams } = newUserRequest;
     const salt = await genSalt();
     const hashedPassword = await hash(password, salt);
-
     const transaction = await this.userRepo.beginTransaction(IsolationLevel.READ_COMMITTED);
     try {
       const savedUser = await this.userRepo.create(

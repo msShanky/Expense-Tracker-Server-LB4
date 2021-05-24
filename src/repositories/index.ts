@@ -5,3 +5,6 @@ export * from './user-category.repository';
 export * from './user-transaction.repository';
 export * from './transaction-type.repository';
 export * from './payment-information.repository';
+export * from './user-wallet-access.repository';
+export * from './master-category.repository';
+export * from './user-transaction-payment.repository';

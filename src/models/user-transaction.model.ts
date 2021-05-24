@@ -1,6 +1,8 @@
-import { belongsTo, Entity, model, property } from '@loopback/repository';
+import { belongsTo, Entity, hasMany, model, property } from '@loopback/repository';
 import { PaymentInformation } from './payment-information.model';
 import { TransactionType } from './transaction-type.model';
+import { UserCategory } from './user-category.model';
+import { UserTransactionPayment } from './user-transaction-payment.model';
 import { Wallet } from './wallet.model';
 
 @model({
@@ -10,6 +12,24 @@ import { Wallet } from './wallet.model';
   },
 })
 export class UserTransaction extends Entity {
+  @property({
+    type: 'number',
+    required: false,
+    generated: true,
+    precision: 10,
+    scale: 0,
+    id: 1,
+    mysql: {
+      columnName: 'transaction_id',
+      dataType: 'int',
+      dataLength: null,
+      dataPrecision: 10,
+      dataScale: 0,
+      nullable: 'N',
+    },
+  })
+  transactionId: number;
+
   @property({
     type: 'number',
     required: true,
@@ -30,7 +50,7 @@ export class UserTransaction extends Entity {
     type: 'string',
     length: 150,
     mysql: {
-      columnName: 'spent_at',
+      columnName: 'narrative',
       dataType: 'varchar',
       dataLength: 150,
       dataPrecision: null,
@@ -38,13 +58,13 @@ export class UserTransaction extends Entity {
       nullable: 'Y',
     },
   })
-  spentAt?: string;
+  narrative?: string;
 
   @property({
     type: 'date',
     required: true,
     mysql: {
-      columnName: 'spent_on',
+      columnName: 'transaction_date',
       dataType: 'datetime',
       dataLength: null,
       dataPrecision: null,
@@ -52,25 +72,21 @@ export class UserTransaction extends Entity {
       nullable: 'N',
     },
   })
-  spentOn: Date;
+  transactionDate: Date;
 
   @property({
-    type: 'number',
-    required: false,
-    generated: true,
-    precision: 10,
-    scale: 0,
-    id: 1,
+    type: 'string',
+    length: 150,
     mysql: {
-      columnName: 'transaction_id',
-      dataType: 'int',
-      dataLength: null,
-      dataPrecision: 10,
-      dataScale: 0,
-      nullable: 'N',
+      columnName: 'bank_reference_number',
+      dataType: 'varchar',
+      dataLength: 255,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'Y',
     },
   })
-  transactionId: number;
+  bankReferenceNumber?: string;
 
   @property({
     type: 'string',
@@ -99,6 +115,12 @@ export class UserTransaction extends Entity {
 
   @belongsTo(() => PaymentInformation)
   paymentInformationId: number;
+
+  @belongsTo(() => UserCategory, { name: 'UserCategory' }, { name: 'category_id' })
+  categoryId: number;
+
+  @hasMany(() => PaymentInformation, { through: { model: () => UserTransactionPayment, keyFrom: 'transactionId' } })
+  paymentInformations: PaymentInformation[];
   // Define well-known properties here
 
   // Indexer property to allow additional data

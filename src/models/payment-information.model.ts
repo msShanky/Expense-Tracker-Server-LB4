@@ -1,4 +1,6 @@
-import { Entity, model, property } from '@loopback/repository';
+import { Entity, model, property, hasMany} from '@loopback/repository';
+import {UserTransaction} from './user-transaction.model';
+import {UserTransactionPayment} from './user-transaction-payment.model';
 
 @model({
   settings: {
@@ -42,7 +44,7 @@ export class PaymentInformation extends Entity {
     type: 'string',
     length: 255,
     mysql: {
-      columnName: 'payee',
+      columnName: 'account_name',
       dataType: 'varchar',
       dataLength: 255,
       dataPrecision: null,
@@ -50,13 +52,13 @@ export class PaymentInformation extends Entity {
       nullable: 'Y',
     },
   })
-  payee?: string;
+  accountName?: string;
 
   @property({
     type: 'string',
     length: 255,
     mysql: {
-      columnName: 'account_info',
+      columnName: 'account_information',
       dataType: 'varchar',
       dataLength: 255,
       dataPrecision: null,
@@ -64,7 +66,7 @@ export class PaymentInformation extends Entity {
       nullable: 'Y',
     },
   })
-  accountInfo?: string;
+  accountInformation?: string;
 
   @property({
     type: 'string',
@@ -134,6 +136,8 @@ export class PaymentInformation extends Entity {
   })
   updatedAt?: string;
 
+  @hasMany(() => UserTransaction, {through: {model: () => UserTransactionPayment, keyTo: 'transactionId'}})
+  userTransactions: UserTransaction[];
   // Define well-known properties here
 
   // Indexer property to allow additional data
